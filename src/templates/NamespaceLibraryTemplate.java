@@ -58,8 +58,11 @@ interface {{ callback.name()|ffi_callback_name }} extends Callback {
 package {{ config.package_name() }};
 
 import com.sun.jna.Structure;
-import com.sun.jna.Pointer;
-
+import com.sun.jna.Pointer;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;
+{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 @Structure.FieldOrder({ {% for field in ffi_struct.fields() %}"{{ field.name()|var_name_raw }}"{% if !loop.last %}, {% endif %}{% endfor %} })
 public class {{ ffi_struct.name()|ffi_struct_name }} extends Structure {
     {%- for field in ffi_struct.fields() %}
@@ -108,12 +111,21 @@ public class {{ ffi_struct.name()|ffi_struct_name }} extends Structure {
 package {{ config.package_name() }};
 
 import com.sun.jna.Library;
-import com.sun.jna.Pointer;
+import com.sun.jna.Pointer;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForProxy;
+{%- endif %}
 
 // A JNA Library to expose the extern-C FFI definitions.
-// This is an implementation detail which will be called internally by the public API.
+// This is an implementation detail which will be called internally by the public API.{% if config.quarkus %}
+@RegisterForProxy{%- endif %}
 interface UniffiLib extends Library {
-    UniffiLib INSTANCE = UniffiLibInitializer.load();
+    class UniffiLibLazyHolder {
+        private static final UniffiLib INSTANCE = UniffiLibInitializer.load();
+    }
+
+    static UniffiLib getInstance() {
+        return UniffiLibLazyHolder.INSTANCE;
+    }
 
     {% if ci.contains_object_types() %}
     // The Cleaner for the whole library

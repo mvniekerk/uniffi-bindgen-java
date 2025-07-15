@@ -1,12 +1,14 @@
 package {{ config.package_name() }};
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.nio.ByteOrder;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForProxy;{%- endif %}
 
 // The FfiConverter interface handles converter types to and from the FFI
 //
 // All implementing objects should be public to support external types.  When a
-// type is external we need to import it's FfiConverter.
+// type is external we need to import it's FfiConverter.{% if config.quarkus %}
+@RegisterForProxy{%- endif %}
 public interface FfiConverter<JavaType, FfiType> {
     // Convert an FFI type to a Java type
     JavaType lift(FfiType value);

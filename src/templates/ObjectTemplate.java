@@ -213,7 +213,7 @@ public class {{ impl_class_name }} implements AutoCloseable, {{ interface_name }
     public void run() {
       if (pointer != null) {
         UniffiHelpers.uniffiRustCall(status -> {
-          UniffiLib.INSTANCE.{{ obj.ffi_object_free().name() }}(pointer, status);
+          UniffiLib.getInstance().{{ obj.ffi_object_free().name() }}(pointer, status);
           return null;
         });
       }
@@ -225,7 +225,7 @@ public class {{ impl_class_name }} implements AutoCloseable, {{ interface_name }
       if (pointer == null) {
         throw new NullPointerException();
       }
-      return UniffiLib.INSTANCE.{{ obj.ffi_object_clone().name() }}(pointer, status);
+      return UniffiLib.getInstance().{{ obj.ffi_object_clone().name() }}(pointer, status);
     });
   }
 

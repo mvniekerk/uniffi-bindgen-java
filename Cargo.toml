@@ -40,6 +40,10 @@ toml = "0.5" # can't be on 8, `Value` is part of public interface
 uniffi_bindgen = "0.29.2"
 uniffi_meta = "0.29.2"
 
+[features]
+default = ["test_quarkus_native"]
+test_quarkus_native = []
+
 [dev-dependencies]
 glob = "0.3"
 itertools = "0.14.0"
@@ -53,3 +57,4 @@ uniffi-fixture-ext-types = { git = "https://github.com/mozilla/uniffi-rs.git", t
 uniffi-fixture-futures = { git = "https://github.com/mozilla/uniffi-rs.git", tag = "v0.29.2" }
 uniffi-fixture-time = { git = "https://github.com/mozilla/uniffi-rs.git", tag = "v0.29.2" }
 uniffi_testing = { git = "https://github.com/mozilla/uniffi-rs.git", tag = "v0.29.2" }
+reqwest = { version = "0.12", features = ["blocking"] }

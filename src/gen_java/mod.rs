@@ -165,6 +165,8 @@ pub struct Config {
     android: bool,
     #[serde(default)]
     android_cleaner: Option<bool>,
+    #[serde(default)]
+    quarkus: bool
 }
 
 impl Config {
@@ -888,7 +890,7 @@ mod filters {
     ) -> Result<String, askama::Error> {
         let ffi_func = callable.ffi_rust_future_poll(ci);
         Ok(format!(
-            "(future, callback, continuation) -> UniffiLib.INSTANCE.{ffi_func}(future, callback, continuation)"
+            "(future, callback, continuation) -> UniffiLib.getInstance().{ffi_func}(future, callback, continuation)"
         ))
     }
 
@@ -898,7 +900,7 @@ mod filters {
         config: &Config,
     ) -> Result<String, askama::Error> {
         let ffi_func = callable.ffi_rust_future_complete(ci);
-        let call = format!("UniffiLib.INSTANCE.{ffi_func}(future, continuation)");
+        let call = format!("UniffiLib.getInstance().{ffi_func}(future, continuation)");
         let call = match callable.return_type() {
             Some(return_type) if ci.is_external(return_type) => {
                 let ffi_type = FfiType::from(return_type);
@@ -929,7 +931,7 @@ mod filters {
         ci: &ComponentInterface,
     ) -> Result<String, askama::Error> {
         let ffi_func = callable.ffi_rust_future_free(ci);
-        Ok(format!("(future) -> UniffiLib.INSTANCE.{ffi_func}(future)"))
+        Ok(format!("(future) -> UniffiLib.getInstance().{ffi_func}(future)"))
     }
 
     /// Remove the "`" chars we put around function/variable names

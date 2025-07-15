@@ -1,13 +1,17 @@
 package {{ config.package_name() }};
 
 import com.sun.jna.Structure;
-import com.sun.jna.Pointer;
-
+import com.sun.jna.Pointer;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;
+{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection(registerFullHierarchy = true){%- endif %}
 @Structure.FieldOrder({ "code", "error_buf" })
 public class UniffiRustCallStatus extends Structure {
     public byte code;
     public RustBuffer.ByValue error_buf;
-
+{% if config.quarkus %}
+    @RegisterForReflection(registerFullHierarchy = true){%- endif %}
     public static class ByValue extends UniffiRustCallStatus implements Structure.ByValue {}
 
     public boolean isSuccess() {
@@ -43,7 +47,11 @@ public class UniffiRustCallStatus extends Structure {
 }
 
 package {{ config.package_name() }};
-
+{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;
+{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection(registerFullHierarchy = true){%- endif %}
 public class InternalException extends RuntimeException {
     public InternalException(String message) {
         super(message);
@@ -51,13 +59,21 @@ public class InternalException extends RuntimeException {
 }
 
 package {{ config.package_name() }};
-
+{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;
+{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection(registerFullHierarchy = true){%- endif %}
 public interface UniffiRustCallStatusErrorHandler<E extends Exception> {
     E lift(RustBuffer.ByValue errorBuf);
 }
 
 package {{ config.package_name() }};
-
+{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;
+{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection(registerFullHierarchy = true){%- endif %}
 // UniffiRustCallStatusErrorHandler implementation for times when we don't expect a CALL_ERROR
 class UniffiNullRustCallStatusErrorHandler implements UniffiRustCallStatusErrorHandler<InternalException> {
     @Override
@@ -72,11 +88,15 @@ package {{ config.package_name() }};
 import java.util.function.Function;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.concurrent.Callable;
+import java.util.concurrent.Callable;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;
+{%- endif %}
 
 // Helpers for calling Rust
 // In practice we usually need to be synchronized to call this safely, so it doesn't
 // synchronize itself
+{% if config.quarkus %}
+@RegisterForReflection(registerFullHierarchy = true){%- endif %}
 public final class UniffiHelpers {
   // Call a rust function that returns a Result<>.  Pass in the Error class companion that corresponds to the Err
   static <U, E extends Exception> U uniffiRustCallWithError(UniffiRustCallStatusErrorHandler<E> errorHandler, Function<UniffiRustCallStatus, U> callback) throws E {

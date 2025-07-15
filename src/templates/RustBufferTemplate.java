@@ -1,20 +1,25 @@
 package {{ config.package_name() }};
 
 import com.sun.jna.Structure;
-import com.sun.jna.Pointer;
+import com.sun.jna.Pointer;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;
+{%- endif %}
 
 /**
  * This is a helper for safely working with byte buffers returned from the Rust code.
  * A rust-owned buffer is represented by its capacity, its current length, and a
  * pointer to the underlying data.
- */
+ */{% if config.quarkus %}
+@RegisterForReflection(registerFullHierarchy = true){%- endif %}
 @Structure.FieldOrder({ "capacity", "len", "data" })
 public class RustBuffer extends Structure {
     public long capacity;
     public long len;
     public Pointer data;
-
-    public static class ByValue extends RustBuffer implements Structure.ByValue {}
+{% if config.quarkus %}
+    @RegisterForReflection(registerFullHierarchy = true){%- endif %}
+    public static class ByValue extends RustBuffer implements Structure.ByValue {}{% if config.quarkus %}
+    @RegisterForReflection(registerFullHierarchy = true){%- endif %}
     public static class ByReference extends RustBuffer implements Structure.ByReference {}
 
     void setValue(RustBuffer other) {
@@ -25,7 +30,7 @@ public class RustBuffer extends Structure {
 
     public static RustBuffer.ByValue alloc(long size) {
         RustBuffer.ByValue buffer = UniffiHelpers.uniffiRustCall((UniffiRustCallStatus status) -> {
-            return (RustBuffer.ByValue) UniffiLib.INSTANCE.{{ ci.ffi_rustbuffer_alloc().name() }}(size, status);
+            return (RustBuffer.ByValue) UniffiLib.getInstance().{{ ci.ffi_rustbuffer_alloc().name() }}(size, status);
         });
         if (buffer.data == null) {
             throw new RuntimeException("RustBuffer.alloc() returned null data pointer (size=" + size + ")");
@@ -35,7 +40,7 @@ public class RustBuffer extends Structure {
 
     public static void free(RustBuffer.ByValue buffer) {
         UniffiHelpers.uniffiRustCall((status) -> {
-            UniffiLib.INSTANCE.{{ ci.ffi_rustbuffer_free().name() }}(buffer, status);
+            UniffiLib.getInstance().{{ ci.ffi_rustbuffer_free().name() }}(buffer, status);
             return null;
         });
     }
@@ -53,13 +58,16 @@ public class RustBuffer extends Structure {
 package {{ config.package_name() }};
 
 import com.sun.jna.Structure;
-import com.sun.jna.Pointer;
+import com.sun.jna.Pointer;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;
+{%- endif %}
 /**
  * The equivalent of the `*mut RustBuffer` type.
  * Required for callbacks taking in an out pointer.
  *
  * Size is the sum of all values in the struct.
- */
+ */{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public class RustBufferByReference extends Structure implements Structure.ByReference {
     public RustBufferByReference() {
         super(16);
@@ -93,13 +101,16 @@ public class RustBufferByReference extends Structure implements Structure.ByRefe
 package {{ config.package_name() }};
 
 import com.sun.jna.Structure;
-import com.sun.jna.Pointer;
+import com.sun.jna.Pointer;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;
+{%- endif %}
 
 // This is a helper for safely passing byte references into the rust code.
 // It's not actually used at the moment, because there aren't many things that you
 // can take a direct pointer to in the JVM, and if we're going to copy something
 // then we might as well copy it into a `RustBuffer`. But it's here for API
-// completeness.
+// completeness.{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 @Structure.FieldOrder({ "len", "data" })
 public class ForeignBytes extends Structure {
     public int len;
