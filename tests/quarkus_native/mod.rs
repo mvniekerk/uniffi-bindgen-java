@@ -11,6 +11,7 @@ pub fn verify_native_graalvm_quarkus_native() {
     let port = next_open_port();
 
     run_quarkus_container(&digest, port);
+    wait_until_endpoint_responds(port);
     get_true_or_false_value_from_http_endpoint(port);
     stop_quarkus_container(&digest);
 }
@@ -31,16 +32,39 @@ fn run_quarkus_container(digest: &str, port: u16) {
         .expect("Failed to run quarkus container");
 }
 
+fn wait_until_endpoint_responds(port: u16) {
+    let url = format!("http://127.0.0.1:{}/?trueOrNot=true", port);
+    println!("URL: {url}");
+    let client = reqwest::blocking::Client::new();
+    for i in 1..10 {
+        let v = client.get(&url).send();
+        match v {
+            Ok(r) => {
+                if r.status().is_success() {
+                    return;
+                }
+                let b = r.text().unwrap_or_default();
+                println!("Error response {b}");
+            }
+            Err(e) => {
+                println!("Error response {e:?}");
+            }
+        }
+        println!("Try {i} of 10 failed. Waiting 1s");
+        std::thread::sleep(std::time::Duration::from_millis(1000));
+    }
+}
+
 fn get_true_or_false_value_from_http_endpoint(port: u16) {
-    let url = format!("http://localhost:{}/trueOrNot=true", port);
+    let url = format!("http://127.0.0.1:{}/?trueOrNot=true", port);
+
     let client = reqwest::blocking::Client::new();
     let response = client.get(&url).send().expect("Failed to send GET request");
     assert!(response.status().is_success());
     let body = response.text().expect("Failed to get response body");
     assert_eq!(body, "true");
 
-    let url = format!("http://localhost:{}/trueOrNot=false", port);
-    let client = reqwest::blocking::Client::new();
+    let url = format!("http://127.0.0.1:{}/?trueOrNot=false", port);
     let response = client.get(&url).send().expect("Failed to send GET request");
     assert!(response.status().is_success());
     let body = response.text().expect("Failed to get response body");
@@ -110,8 +134,10 @@ fn build_quarkus_linux_executable() -> anyhow::Result<()> {
         .current_dir("tests/quarkus_native/scripts")
         .args(&[
             "package",
-            "-Pnative",
-            "-Dquarkus.native.container-build=true",
+            // Uncomment this to get a native build. Doesn't work too great on Arm64 (yet)
+            // "-Pnative",
+            // "-Dquarkus.native.resources.includes=com/sun/jna/linux-x86-64/libjnidispatch.so,com/sun/jna/linux-aarch64/libjnidispatch.so,libsay_true.so",
+            // "-Dquarkus.native.container-build=true",
             "-DskipTests=true",
             "-Dquarkus.container-image.build=true",
             &*image_platform

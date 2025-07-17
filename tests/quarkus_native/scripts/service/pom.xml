@@ -87,6 +87,18 @@
             <goals>
               <goal>build</goal>
             </goals>
+            <configuration>
+              <properties>
+                <quarkus.jacoco.data-file>${maven.multiModuleProjectDirectory}/target/jacoco.exec</quarkus.jacoco.data-file>
+                <quarkus.jacoco.reuse-data-file>true</quarkus.jacoco.reuse-data-file>
+                <quarkus.jacoco.report-location>${maven.multiModuleProjectDirectory}/target/coverage</quarkus.jacoco.report-location>
+                <quarkus.native.resources.includes>com/sun/jna/linux-x86-64/libjnidispatch.so\,com/sun/jna/linux-aarch64/libjnidispatch.so\,libsay_true.so</quarkus.native.resources.includes>
+                <quarkus.native.additional-build-args>--initialize-at-run-time=uniffi.quarkus.UniffiLib\,com.sun.jna</quarkus.native.additional-build-args>
+                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                <maven.home>${maven.home}</maven.home>
+                <enableJni>true</enableJni>
+              </properties>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -121,7 +133,8 @@
             <quarkus.jacoco.data-file>${maven.multiModuleProjectDirectory}/target/jacoco.exec</quarkus.jacoco.data-file>
             <quarkus.jacoco.reuse-data-file>true</quarkus.jacoco.reuse-data-file>
             <quarkus.jacoco.report-location>${maven.multiModuleProjectDirectory}/target/coverage</quarkus.jacoco.report-location>
-            <quarkus.native.resources.includes>>com/sun/jna/linux-x86-64/libjnidispatch.so\,com/sun/jna/linux-aarch64/libjnidispatch.so\,libsay_true.so</quarkus.native.resources.includes>
+            <quarkus.native.resources.includes>com/sun/jna/linux-x86-64/libjnidispatch.so\,com/sun/jna/linux-aarch64/libjnidispatch.so\,libsay_true.so</quarkus.native.resources.includes>
+<!--            <quarkus.native.additional-build-args>&#45;&#45;initialize-at-run-time=com.sun.jna.internal</quarkus.native.additional-build-args>-->
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
             <maven.home>${maven.home}</maven.home>
           </systemPropertyVariables>

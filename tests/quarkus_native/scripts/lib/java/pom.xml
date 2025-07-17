@@ -130,7 +130,7 @@
             <configuration>
               <systemPropertyVariables>
                 <native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
-                <quarkus.native.resources.includes>>com/sun/jna/linux-x86-64/libjnidispatch.so\,com/sun/jna/linux-aarch64/libjnidispatch.so\,libsay_true.so</quarkus.native.resources.includes>
+                <quarkus.native.resources.includes>com/sun/jna/linux-x86-64/libjnidispatch.so\,com/sun/jna/linux-aarch64/libjnidispatch.so\,libsay_true.so</quarkus.native.resources.includes>
                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                 <maven.home>${maven.home}</maven.home>
                 <quarkus.http.test-port>0</quarkus.http.test-port>

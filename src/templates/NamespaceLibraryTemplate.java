@@ -120,10 +120,13 @@ import io.quarkus.runtime.annotations.RegisterForProxy;
 @RegisterForProxy{%- endif %}
 interface UniffiLib extends Library {
     class UniffiLibLazyHolder {
-        private static final UniffiLib INSTANCE = UniffiLibInitializer.load();
+        private static UniffiLib INSTANCE;
     }
 
     static UniffiLib getInstance() {
+        if (UniffiLibLazyHolder.INSTANCE == null) {
+            UniffiLibLazyHolder.INSTANCE = UniffiLibInitializer.load();
+        }
         return UniffiLibLazyHolder.INSTANCE;
     }
 
