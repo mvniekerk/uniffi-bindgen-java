@@ -70,7 +70,7 @@
                 <argument>-v</argument>
                 <argument>${pom.parent.basedir}/.cargo/registry:/root/.cargo/registry</argument>
                 <argument>-w</argument>
-                <argument>/home/rust/src/tests/quarkus_native/scripts/lib/rust</argument>
+                <argument>/home/rust/src/tests/quarkus/scripts/lib/rust</argument>
                 <argument>rust:latest</argument>
                 <argument>./build.sh</argument>
               </arguments>
@@ -94,7 +94,7 @@
                 <argument>-v</argument>
                 <argument>${pom.parent.basedir}/.cargo/registry:/root/.cargo/registry</argument>
                 <argument>-w</argument>
-                <argument>/home/rust/src/tests/quarkus_native/scripts/lib/rust</argument>
+                <argument>/home/rust/src/tests/quarkus/scripts/lib/rust</argument>
                 <argument>rust:latest</argument>
                 <argument>./clean.sh</argument>
               </arguments>

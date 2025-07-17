@@ -90,8 +90,8 @@ fn next_open_port() -> u16 {
 }
 
 fn get_docker_image_digest() -> String {
-    // File is in tests/quarkus_native/scripts/service/target/jib-image.id
-    let path = "tests/quarkus_native/scripts/service/target/jib-image.id";
+    // File is in tests/quarkus/scripts/service/target/jib-image.id
+    let path = "tests/quarkus/scripts/service/target/jib-image.id";
     let contents = std::fs::read_to_string(path)
         .expect("Failed to read jib-image.id file");
     let digest = contents.trim();
@@ -116,7 +116,7 @@ fn build_quarkus_linux_executable() -> anyhow::Result<()> {
 
     eprintln!("Cleaning");
     let child = Command::new("./mvnw")
-        .current_dir("tests/quarkus_native/scripts")
+        .current_dir("tests/quarkus/scripts")
         .args(&[
             "clean",
         ])
@@ -131,7 +131,7 @@ fn build_quarkus_linux_executable() -> anyhow::Result<()> {
 
     eprintln!("Building");
     let child = Command::new("./mvnw")
-        .current_dir("tests/quarkus_native/scripts")
+        .current_dir("tests/quarkus/scripts")
         .args(&[
             "package",
             // Uncomment this to get a native build. Doesn't work too great on Arm64 (yet)
