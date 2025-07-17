@@ -41,7 +41,8 @@ uniffi_bindgen = "0.29.2"
 uniffi_meta = "0.29.2"
 
 [features]
-default = ["test_quarkus_native"]
+default = ["test_quarkus"]
+test_quarkus = []
 test_quarkus_native = []
 
 [dev-dependencies]
