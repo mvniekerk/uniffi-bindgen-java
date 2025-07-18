@@ -7,8 +7,10 @@
 package {{ package_name }};
 
 import java.util.List;
-import java.util.Map;
-
+import java.util.Map;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public record {{ type_name }}(
   {{ builtin|type_name(ci, config) }} value
 ) {
@@ -17,8 +19,10 @@ public record {{ type_name }}(
 package {{ package_name }};
 
 import java.nio.ByteBuffer;
-import com.sun.jna.Pointer;
-
+import com.sun.jna.Pointer;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public enum {{ ffi_converter_name }} implements FfiConverter<{{ type_name }}, {{ ffi_type_name}}> {
   INSTANCE;
   @Override
@@ -67,8 +71,10 @@ import {{ import_name }};
 {%- else %}
 {%- endmatch %}
 import java.util.List;
-import java.util.Map;
-
+import java.util.Map;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public record {{ type_name }}(
   {{ concrete_type_name }} value
 ) {}
@@ -87,7 +93,10 @@ import com.sun.jna.Pointer;
 import {{ import_name }};
 {%- endfor %}
 {%- else %}
-{%- endmatch %}
+{%- endmatch %}{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 // FFI converter with custom code.
 public enum {{ ffi_converter_name }} implements FfiConverter<{{ type_name }}, {{ ffi_type_name }}> {
     INSTANCE;

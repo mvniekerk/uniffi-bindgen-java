@@ -1,7 +1,9 @@
 package {{ config.package_name() }};
 
-import java.nio.ByteBuffer;
-
+import java.nio.ByteBuffer;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public enum FfiConverterShort implements FfiConverter<Short, Short>{
   INSTANCE;
 

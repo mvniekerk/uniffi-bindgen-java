@@ -10,8 +10,10 @@
 {% include "CallbackInterfaceImpl.java" %}
 
 package {{ config.package_name() }};
-
-// The ffiConverter which transforms the Callbacks in to handles to pass to Rust.
+{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+// The ffiConverter which transforms the Callbacks in to handles to pass to Rust.{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public final class {{ ffi_converter_name }} extends FfiConverterCallbackInterface<{{ interface_name }}> {
   static final {{ ffi_converter_name }} INSTANCE = new {{ ffi_converter_name }}();
 

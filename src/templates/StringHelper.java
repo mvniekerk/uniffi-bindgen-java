@@ -5,8 +5,10 @@ import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
-import java.nio.charset.StandardCharsets;
-
+import java.nio.charset.StandardCharsets;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public enum FfiConverterString implements FfiConverter<String, RustBuffer.ByValue> {
     INSTANCE;
 

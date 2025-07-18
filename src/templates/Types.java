@@ -4,8 +4,10 @@ package {{ config.package_name() }};
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
-
+import java.util.stream.Stream;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForProxy;{%- endif %}
+{% if config.quarkus %}
+@RegisterForProxy{%- endif %}
 public interface AutoCloseableHelper {
     static void close(Object... args) {
         Stream
@@ -57,7 +59,10 @@ public interface AutoCloseableHelper {
     }
 }
 package {{ config.package_name() }};
-
+{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public class NoPointer {
     // Private constructor to prevent instantiation
     private NoPointer() {}

@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import com.sun.jna.*;
-import com.sun.jna.ptr.*;
+import com.sun.jna.ptr.*;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
 
-{%- call java::docstring_value(interface_docstring, 0) %}
+{%- call java::docstring_value(interface_docstring, 0) %}{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public interface {{ interface_name }} {
     {% for meth in methods.iter() -%}
     {%- call java::docstring(meth, 4) %}

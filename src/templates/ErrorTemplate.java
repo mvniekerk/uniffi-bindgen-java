@@ -1,11 +1,13 @@
 package {{ config.package_name() }};
-
+{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
 {%- let type_name = type_|type_name(ci, config) %}
 {%- let ffi_converter_instance = type_|ffi_converter_instance(config, ci) %}
 {%- let canonical_type_name = type_|canonical_name %}
 
 {% if e.is_flat() %}
-{%- call java::docstring(e, 0) %}
+{%- call java::docstring(e, 0) %}{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public class {{ type_name }} extends Exception {
     private {{ type_name }}(String message) {
       super(message);
@@ -23,7 +25,8 @@ public class {{ type_name }} extends Exception {
 
 
 {%- else %}
-{%- call java::docstring(e, 0) %}
+{%- call java::docstring(e, 0) %}{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public class {{ type_name }} extends Exception {
     private {{ type_name }}(String message) {
       super(message); 
@@ -78,8 +81,10 @@ public class {{ type_name }} extends Exception {
 }
 {%- endif %}
 
-package {{ config.package_name() }};
-
+package {{ config.package_name() }};{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public class {{ type_name }}ErrorHandler implements UniffiRustCallStatusErrorHandler<{{ type_name }}> {
   @Override
   public {{ type_name }} lift(RustBuffer.ByValue errorBuf){
@@ -89,8 +94,10 @@ public class {{ type_name }}ErrorHandler implements UniffiRustCallStatusErrorHan
 
 package {{ config.package_name() }};
 
-import java.nio.ByteBuffer;
-
+import java.nio.ByteBuffer;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public enum {{ e|ffi_converter_name }} implements FfiConverterRustBuffer<{{ type_name }}> {
     INSTANCE;
 

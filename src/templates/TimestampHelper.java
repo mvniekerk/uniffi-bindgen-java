@@ -3,8 +3,10 @@ package {{ config.package_name() }};
 import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.time.Duration;
-import java.time.DateTimeException;
-
+import java.time.DateTimeException;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public enum FfiConverterTimestamp implements FfiConverterRustBuffer<Instant> {
     INSTANCE;
 

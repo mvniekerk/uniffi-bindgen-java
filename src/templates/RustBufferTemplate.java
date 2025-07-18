@@ -115,6 +115,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 public class ForeignBytes extends Structure {
     public int len;
     public Pointer data;
-
+{% if config.quarkus %}
+    @RegisterForReflection{%- endif %}
     public static class ByValue extends ForeignBytes implements Structure.ByValue {}
 }

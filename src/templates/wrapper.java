@@ -34,9 +34,11 @@ package {{ config.package_name() }};
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletableFuture;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
 
-{%- call java::docstring_value(ci.namespace_docstring(), 0) %}
+{%- call java::docstring_value(ci.namespace_docstring(), 0) %}{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public class {{ ci.namespace()|class_name(ci) }} {
   {%- for func in ci.function_definitions() %}
   {% call java::func_decl("public static", "", func, 4) %}

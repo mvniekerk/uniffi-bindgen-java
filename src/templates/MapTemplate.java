@@ -8,8 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import java.util.stream.Collectors;
-
+import java.util.stream.Collectors;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public enum {{ ffi_converter_name }} implements FfiConverterRustBuffer<Map<{{ key_type_name }}, {{ value_type_name }}>> {
     INSTANCE;
 

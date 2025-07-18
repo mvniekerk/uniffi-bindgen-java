@@ -7,8 +7,10 @@ package {{ config.package_name() }};
 import java.util.List;
 import java.nio.ByteBuffer;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
+import java.util.stream.Stream;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public enum {{ ffi_converter_name }} implements FfiConverterRustBuffer<List<{{ inner_type_name }}>> {
   INSTANCE;
 

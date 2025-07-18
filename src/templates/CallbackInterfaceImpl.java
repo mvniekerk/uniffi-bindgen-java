@@ -9,11 +9,13 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.List;
 import com.sun.jna.*;
-import com.sun.jna.ptr.*;
-
+import com.sun.jna.ptr.*;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
 {%- let trait_impl=format!("UniffiCallbackInterface{}", name) %}
 
 // Put the implementation in an object so we don't pollute the top-level namespace
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public class {{ trait_impl }} {
     public static final {{ trait_impl }} INSTANCE = new {{ trait_impl }}();
     {{ vtable|ffi_type_name_by_value(config, ci) }} vtable;
@@ -34,7 +36,8 @@ public class {{ trait_impl }} {
     }        
 
     {%- for (ffi_callback, meth) in vtable_methods.iter() %}
-    {% let inner_method_class = meth.name()|var_name %}
+    {% let inner_method_class = meth.name()|var_name %}{% if config.quarkus %}
+    @RegisterForReflection{%- endif %}
     public static class {{ inner_method_class }} implements {{ ffi_callback.name()|ffi_callback_name }} {
         public static final {{ inner_method_class }} INSTANCE = new {{ inner_method_class }}();
         private {{ inner_method_class }}() {}
@@ -127,7 +130,8 @@ public class {{ trait_impl }} {
         }
     }
     {%- endfor %}
-
+    {% if config.quarkus %}
+    @RegisterForReflection{%- endif %}
     public static class UniffiFree implements {{ "CallbackInterfaceFree"|ffi_callback_name }} {
         public static final UniffiFree INSTANCE = new UniffiFree();
 

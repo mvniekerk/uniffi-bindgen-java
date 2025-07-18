@@ -42,8 +42,11 @@ final class NamespaceLibrary {
 package {{ config.package_name() }};
 
 import com.sun.jna.*;
-import com.sun.jna.ptr.*;
-
+import com.sun.jna.ptr.*;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForProxy;
+{%- endif %}
+{% if config.quarkus %}
+@RegisterForProxy{%- endif %}
 interface {{ callback.name()|ffi_callback_name }} extends Callback {
     public {% match callback.return_type() %}{%- when Some(return_type) %}{{ return_type|ffi_type_name_for_ffi_struct(config, ci) }}{%- when None %}void{%- endmatch %} callback(
         {%- for arg in callback.arguments() -%}

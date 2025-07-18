@@ -71,8 +71,10 @@ public interface FfiConverter<JavaType, FfiType> {
 }
 
 package {{ config.package_name() }};
-
-// FfiConverter that uses `RustBuffer` as the FfiType
+{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForProxy;{%- endif %}
+// FfiConverter that uses `RustBuffer` as the FfiType{% if config.quarkus %}
+@RegisterForProxy{%- endif %}
 public interface FfiConverterRustBuffer<JavaType> extends FfiConverter<JavaType, RustBuffer.ByValue> {
     @Override
     default JavaType lift(RustBuffer.ByValue value) {

@@ -117,12 +117,15 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.Consumer;
 import com.sun.jna.Pointer;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletableFuture;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
 
 {%- call java::docstring(obj, 0) %}
-{% if (is_error) %}
+{% if (is_error) %}{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public class {{ impl_class_name }} extends Exception implements AutoCloseable, {{ interface_name }} {
-{% else -%}
+{% else -%}{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public class {{ impl_class_name }} implements AutoCloseable, {{ interface_name }} {
 {%- endif %}
   protected Pointer pointer;
@@ -269,8 +272,10 @@ public class {{ impl_class_name }} implements AutoCloseable, {{ interface_name }
 }
 
 {% if is_error %}
-package {{ config.package_name() }};
-
+package {{ config.package_name() }};{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public class {{ impl_class_name }}ErrorHandler implements UniffiRustCallStatusErrorHandler<{{ impl_class_name }}> {
     @Override
     public {{ impl_class_name }} lift(RustBuffer.ByValue error_buf) {
@@ -294,8 +299,10 @@ public class {{ impl_class_name }}ErrorHandler implements UniffiRustCallStatusEr
 package {{ config.package_name() }};
 
 import java.nio.ByteBuffer;
-import com.sun.jna.Pointer;
-
+import com.sun.jna.Pointer;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public enum {{ ffi_converter_name }} implements FfiConverter<{{ type_name }}, Pointer> {
     INSTANCE;
 

@@ -2,18 +2,21 @@ package {{ config.package_name() }};
 
 import java.util.List;
 import java.util.Map;
-
+{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
 {%- if e.is_flat() %}
 {% call java::docstring(e, 0) %}
 {% match e.variant_discr_type() %}
-{% when None %}
+{% when None %}{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public enum {{ type_name }} {
   {%- for variant in e.variants() -%}
   {%- call java::docstring(variant, 4) %}
   {{ variant|variant_name}}{% if loop.last %};{% else %},{% endif %}
   {%- endfor %}
 }
-{% when Some with (variant_discr_type) %}
+{% when Some with (variant_discr_type) %}{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public enum {{ type_name }} {
   {% for variant in e.variants() -%}
   {%- call java::docstring(variant, 4) %}
@@ -29,8 +32,10 @@ public enum {{ type_name }} {
 
 package {{ config.package_name() }};
 
-import java.nio.ByteBuffer;
-
+import java.nio.ByteBuffer;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public enum {{ e|ffi_converter_name}} implements FfiConverterRustBuffer<{{ type_name }}> {
     INSTANCE;
 
@@ -56,7 +61,8 @@ public enum {{ e|ffi_converter_name}} implements FfiConverterRustBuffer<{{ type_
 
 {% else %}
 
-{%- call java::docstring(e, 0) %}
+{%- call java::docstring(e, 0) %}{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public sealed interface {{ type_name }}{% if contains_object_references %} extends AutoCloseable {% endif %} {
   {% for variant in e.variants() -%}
   {%- call java::docstring(variant, 4) %}
@@ -89,8 +95,10 @@ public sealed interface {{ type_name }}{% if contains_object_references %} exten
 
 package {{ config.package_name() }};
 
-import java.nio.ByteBuffer;
-
+import java.nio.ByteBuffer;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public enum {{ e|ffi_converter_name}} implements FfiConverterRustBuffer<{{ type_name }}> {
     INSTANCE;
 

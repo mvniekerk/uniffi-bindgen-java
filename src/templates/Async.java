@@ -6,8 +6,11 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
-
+import java.util.function.Supplier;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForProxy;
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 public final class UniffiAsyncHelpers {
     // Async return type handlers
     static final byte UNIFFI_RUST_FUTURE_POLL_READY = (byte) 0;
@@ -15,7 +18,8 @@ public final class UniffiAsyncHelpers {
     static final UniffiHandleMap<CompletableFuture<Byte>> uniffiContinuationHandleMap = new UniffiHandleMap<>();
     static final UniffiHandleMap<CancelableForeignFuture> uniffiForeignFutureHandleMap = new UniffiHandleMap<>();
 
-    // FFI type for Rust future continuations
+    // FFI type for Rust future continuations{% if config.quarkus %}
+    @RegisterForReflection{%- endif %}
     enum UniffiRustFutureContinuationCallbackImpl implements UniffiRustFutureContinuationCallback {
         INSTANCE;
 
@@ -25,11 +29,13 @@ public final class UniffiAsyncHelpers {
         }
     }
 
-    @FunctionalInterface
+    @FunctionalInterface{% if config.quarkus %}
+    @RegisterForProxy{%- endif %}
     interface PollingFunction {
         void apply(long rustFuture, UniffiRustFutureContinuationCallback callback, long continuationHandle);
     }
-    
+    {% if config.quarkus %}
+    @RegisterForReflection{%- endif %}
     static class UniffiFreeingFuture<T> extends CompletableFuture<T> {
         private Consumer<Long> freeFunc;
         private long rustFuture;
@@ -52,6 +58,8 @@ public final class UniffiAsyncHelpers {
     // helper so both the Java completable future and the job that handles it finishing and reports to Rust can be
     // retrieved (and potentially cancelled) by handle. This allows our FreeImpl to be a parameterless singleton,
     // preventing #19, which was caused by our FreeImpls being GCd before Rust called back into them.
+    {% if config.quarkus %}
+    @RegisterForReflection{%- endif %}
     static class CancelableForeignFuture {
         private CompletableFuture<?> childFuture;
         private CompletableFuture<Void> childFutureHandler;
@@ -68,7 +76,8 @@ public final class UniffiAsyncHelpers {
             }
         }
     }
-
+    {% if config.quarkus %}
+    @RegisterForReflection{%- endif %}
     static <T, F, E extends Exception> CompletableFuture<T> uniffiRustCallAsync(
         long rustFuture,
         PollingFunction pollFunc,
@@ -108,6 +117,8 @@ public final class UniffiAsyncHelpers {
     
     // overload specifically for Void cases, which aren't within the Object type.
     // This is only necessary because of Java's lack of proper Any/Unit
+    {% if config.quarkus %}
+    @RegisterForReflection{%- endif %}
     static <E extends Exception> CompletableFuture<Void> uniffiRustCallAsync(
         long rustFuture,
         PollingFunction pollFunc,
@@ -155,7 +166,8 @@ public final class UniffiAsyncHelpers {
         return pollFuture.get();
     }
     
-    {%- if ci.has_async_callback_interface_definition() %}
+    {%- if ci.has_async_callback_interface_definition() %}{% if config.quarkus %}
+    @RegisterForReflection{%- endif %}
     static <T> UniffiForeignFuture uniffiTraitInterfaceCallAsync(
         Supplier<CompletableFuture<T>> makeCall,
         Consumer<T> handleSuccess,
@@ -226,7 +238,8 @@ public final class UniffiAsyncHelpers {
         long handle = uniffiForeignFutureHandleMap.insert(new CancelableForeignFuture(foreignFutureCf, ffHandler));
         return new UniffiForeignFuture(handle, UniffiForeignFutureFreeImpl.INSTANCE);
     }
-
+    {% if config.quarkus %}
+    @RegisterForReflection{%- endif %}
     enum UniffiForeignFutureFreeImpl implements UniffiForeignFutureFree {
         INSTANCE;
 

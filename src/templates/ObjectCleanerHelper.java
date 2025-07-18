@@ -1,11 +1,15 @@
 package {{ config.package_name() }};
+{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForProxy;
 
+{%- endif %}
 // The cleaner interface for Object finalization code to run.
 // This is the entry point to any implementation that we're using.
 //
 // The cleaner registers objects and returns cleanables, so now we are
 // defining a `UniffiCleaner` with a `UniffiClenaer.Cleanable` to abstract the
-// different implmentations available at compile time.
+// different implementations available at compile time.{% if config.quarkus %}
+@RegisterForProxy{%- endif %}
 interface UniffiCleaner {
     interface Cleanable {
         void clean();
@@ -38,9 +42,11 @@ interface UniffiCleaner {
 
 package {{ config.package_name() }};
 
-import com.sun.jna.internal.Cleaner;
+import com.sun.jna.internal.Cleaner;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
 
-// The fallback Jna cleaner, which is available for both Android, and the JVM.
+// The fallback Jna cleaner, which is available for both Android, and the JVM.{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 class UniffiJnaCleaner implements UniffiCleaner {
     private final Cleaner cleaner = Cleaner.getCleaner();
 
@@ -52,8 +58,10 @@ class UniffiJnaCleaner implements UniffiCleaner {
 
 package {{ config.package_name() }};
 
-import com.sun.jna.internal.Cleaner;
-
+import com.sun.jna.internal.Cleaner;{% if config.quarkus %}
+import io.quarkus.runtime.annotations.RegisterForReflection;{%- endif %}
+{% if config.quarkus %}
+@RegisterForReflection{%- endif %}
 class UniffiJnaCleanable implements UniffiCleaner.Cleanable {
     private final Cleaner.Cleanable cleanable;
 
